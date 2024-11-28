@@ -1,73 +1,52 @@
-import string
+import tkinter as tk
+from tkinter import messagebox
+from openpyxl import Workbook
 
-import pandas as pd
-import numpy
-import os
-import Functions
-from tkinter import *
+class ExcelApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Simple Excel App")
 
-xAxis = string.ascii_lowercase[0:7]
-yAxis = range(0, 12)
-cells = {}
-root = Tk()
-root.title("тест эщкере")
+        # Создание таблицы
+        self.entries = []
+        self.num_rows = 19  # Количество строк
+        self.num_columns = 11  # Количество столбцов
 
-for y in yAxis:
-    label = Label(root, text=y, width=5, background='white')
-    label.grid(row=y + 1, column=0)
+        for i in range(self.num_rows):
+            row_entries = []
+            for j in range(self.num_columns):
+                label = tk.Label(root, text='Column ' +str(i+1))
+                label.grid(row=i+1, column=0)
+                label = tk.Label(root, text='A')
+                label.grid(row=0, column=j+1)
+                entry = tk.Entry(root, width=10)
+                entry.grid(padx=5,pady=5,row=i+1, column=j+1)
+                row_entries.append(entry)
+            self.entries.append(row_entries)
 
-for i, x in enumerate(xAxis):
-    label = Label(root, text=x, width=35, background='white')
-    label.grid(row=0, column=i + 1, sticky='n')
+        # Кнопка для сохранения в Excel
+        self.save_button = tk.Button(root, text="Save to Excel", command=self.save_to_excel)
+        self.save_button.grid(row=self.num_rows, columnspan=self.num_columns)
 
-for y in yAxis:
-    for xcoor, x in enumerate(xAxis):
-        id = f'{x}{y}'
+    def save_to_excel(self):
+        # Создание новой книги Excel
+        wb = Workbook()
+        ws = wb.active
 
-        var = StringVar(root, '', id)
-        e = Entry(root, textvariable=var, width=20)
-        e.grid(row=y + 1, column=xcoor + 1)
-        label = Label(root, text='', width=5)
-        label.grid(row=y + 1, column=xcoor + 1, sticky='e')
-        cells[id] = [var, label]
+        # Запись данных из полей ввода в книгу
+        for i, row_entries in enumerate(self.entries):
+            row_data = [entry.get() for entry in row_entries]
+            ws.append(row_data)
 
-
-def evaluateCell(cellid):
-    content = cells[cellid][0].get()
-    content = content.lower()
-    label = cells[cellid][1]
-    if content.startswith('='):
-        for cell in cells:
-            if cell in content.lower():
-                content = content.replace(cell, str(evaluateCell(cell)))
-        content = content[1:]
+        # Сохранение книги
         try:
-            content = eval(content)
-        except:
-            content = 'NAN'
-        label['text'] = content
-        return content
-    else:
-        label['text'] = content
-        return content
+            wb.save("output.xlsx")
+            messagebox.showinfo("Success", "Data saved to output.xlsx")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
-
-def updateAllCells():
-    for cell in cells:
-        evaluateCell(cell)
-    root.after(1000, updateAllCells())
-
-
-updateAllCells()
-root.mainloop()
-
-# columnslist = []
-# filename = input("Введите имя новой excel таблицы: ")
-# columns = int(input("Введите количество столбцов: "))
-#
-# for i in range(columns):
-#     userinput = input("ХЗ ")
-#     columnslist.append(userinput)
-#
-# Functions.create_tabel(columnslist, filename)
-# Functions.parse_tabel(filename)
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ExcelApp(root)
+    root.geometry("815x610")
+    root.mainloop()
