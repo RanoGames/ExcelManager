@@ -5,6 +5,8 @@ from design import Ui_MainWindow
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLineEdit
 from PyQt6 import QtGui
 import sys
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -13,6 +15,7 @@ class MainWindow(QMainWindow):
         self.ui.SaveButton.clicked.connect(self.save_to_excel)
         self.ui.LoadButton.clicked.connect(self.load_from_excel)  # Если вы хотите добавить загрузку
         self.ui.ClearButton.clicked.connect(self.clear_fields)  # Если вы хотите добавить очистку
+
     def save_to_excel(self):
         # Создаем новую книгу Excel
         wb = Workbook()
@@ -26,6 +29,7 @@ class MainWindow(QMainWindow):
         if file_name:
             wb.save(file_name)
             QMessageBox.information(self, "Успех", "Данные успешно сохранены!")
+
     def clear_fields(self):
         # Очищаем все QLineEdit
         for row in range(1, 14):
@@ -55,6 +59,8 @@ class MainWindow(QMainWindow):
                                 str(cell_value) if cell_value is not None else '')  # Устанавливаем текст в QLineEdit
             except Exception:
                 pass  # Игнорируем ошибки при загрузке данных из Excel
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = MainWindow()
