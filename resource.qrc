@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="recourceprog">
+    <file>static/icon.png</file> 
+    <file>static/SmallDiagram.png</file>
+    <file>static/Diagram.png</file>
+    <file>SmallDiagram.png</file>
+    <file>Diagram.png</file>
+  </qresource>
+</RCC>
